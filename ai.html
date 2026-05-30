@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auricius AI - Người bạn đồng hành cùng bạn</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Google Sans Flex -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <!-- Google Material Symbols Rounded -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <!-- KaTeX CSS for LaTeX rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <!-- KaTeX JS and Auto-render extension -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Libre Franklin"', 'sans-serif'],
+                    },
+                    colors: {
+                        copilotSkin: '#F6F3EE', // Light mode skin (Copilot skin)
+                        copilotLight: '#EFECE6', // Darker accent skin
+                        midnightSkin: '#121110', // Dark mode skin (Warm dark charcoal)
+                        midnightCard: '#1A1918',  // Warm dark elevation card
+                        AuriciusDark: '#000000',   // Text dark gray
+                        AuriciusBorder: '#E2E8F0',  // Minimalistic structural borders
+                        AuriciusDarkBorder: '#2A2928'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-weight: 300; /* Super lightweight and elegant typography */
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Override strong weight to keep it visually light and sophisticated */
+        strong {
+            font-weight: 500 !important;
+        }
+        /* Material symbols weight tuning */
+        .material-symbols-rounded {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbars for tidy layout borders */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.06);
+            border-radius: 999px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.08);
+        }
+        /* Floating active card styling for hover state */
+        .glow-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.03);
+        }
+        /* KaTeX responsive adjustments */
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 8px 0;
+        }
+        /* Custom animation for fading and sliding transitions */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+    </style>
+</head>
+<body class="h-screen overflow-hidden bg-copilotSkin dark:bg-midnightSkin text-zinc-800 dark:text-zinc-200 flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-copilotSkin dark:bg-midnightSkin border-r border-stone-200/60 dark:border-zinc-800/60 flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <!-- Sidebar Header with Auricius Brand & Unknown 5 Logo -->
+        <div class="p-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-900 shadow-sm shrink-0">
+                    <span class="material-symbols-rounded text-2xl">diversity_2</span>
+                </div>
+                <div>
+                    <span class="text-lg font-medium tracking-tight flex items-center gap-1.5 text-zinc-900 dark:text-zinc-50">
+                        Auricius <span class="text-xs bg-zinc-900/5 dark:bg-zinc-100/10 border border-zinc-900/10 dark:border-zinc-100/15 text-zinc-800 dark:text-zinc-200 px-2 py-0.5 rounded-full font-light">Auricius 3.5</span>
+                    </span>
+                </div>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-full hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 transition-all flex items-center justify-center">
+                <span class="material-symbols-rounded text-zinc-800 dark:text-zinc-200">close</span>
+            </button>
+        </div>
+
+        <!-- Create New Chat Pill Button (Solid Jet Black) -->
+        <div class="px-4 py-2 space-y-2">
+            <button onclick="startNewChat()" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-light py-3 px-5 rounded-full flex items-center justify-center gap-3 shadow-md transition-all active:scale-[0.98]">
+                <span class="material-symbols-rounded text-lg">add</span>
+                <span>Trò chuyện mới</span>
+            </button>
+
+            <!-- Gena AI Model Hub Button -->
+            <button onclick="openGenaHub()" class="w-full border border-zinc-900/10 dark:border-zinc-100/10 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 text-zinc-900 dark:text-zinc-100 font-light py-3 px-5 rounded-full flex items-center justify-center gap-3 transition-all active:scale-[0.98]">
+                <span class="material-symbols-rounded text-lg">grid_view</span>
+                <span>Auricius Labs</span>
+            </button>
+        </div>
+
+        <!-- Chat history container -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-1.5" id="chatHistoryList">
+            <div class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider px-3 mb-2 flex items-center gap-1">
+                <span class="material-symbols-rounded text-sm">history</span> Lịch sử cuộc trò chuyện
+            </div>
+            <!-- Dynamic items will be added here -->
+            <div id="noHistoryPlaceholder" class="text-xs text-zinc-500 dark:text-zinc-400 px-3 py-4 italic font-light">
+                Chưa có cuộc trò chuyện nào gần đây.
+            </div>
+        </div>
+
+        <!-- Settings & System Configurations Panel -->
+        <div class="p-4 border-t border-stone-200/60 dark:border-zinc-800/60 bg-stone-100/30 dark:bg-zinc-900/30 space-y-3">
+            <!-- API Status (Hiding details for security) -->
+            <div class="bg-stone-200/40 dark:bg-zinc-900/60 p-3 rounded-2xl border border-stone-200/30 dark:border-zinc-800/30">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="font-medium text-zinc-800 dark:text-zinc-200 flex items-center gap-1">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>Auricius 3.5 Unions
+                    </span>
+                    <button onclick="toggleSettingsModal()" class="text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center transition-colors">
+                        <span class="material-symbols-rounded text-sm">settings</span>
+                    </button>
+                </div>
+                <div class="text-[11px] text-zinc-500 dark:text-zinc-400 font-light" id="apiKeyStatusLabel">
+                   Auricius 3.5 
+                </div>
+            </div>
+
+            <!-- Upgrade Pill Button (Solid Jet Black) -->
+            <button onclick="openUpgradeModal()" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs font-light py-3 px-4 rounded-full flex items-center justify-between group transition-all active:scale-[0.98]">
+                <span class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-white dark:text-zinc-900 material-symbols-filled group-hover:rotate-12 transition-transform">workspace_premium</span>
+                    Nâng cấp lên Plus
+                </span>
+                <span class="material-symbols-rounded text-sm opacity-70 group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay on mobile when sidebar is active -->
+    <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/10 z-40 hidden lg:hidden backdrop-blur-sm transition-all"></div>
+
+    <!-- Main content container -->
+    <main class="flex-1 flex flex-col h-full bg-copilotSkin dark:bg-midnightSkin lg:pl-72 transition-all duration-300 relative">
+        
+        <!-- Header Controls (No border-b separator as requested for flawless layout) -->
+        <header class="h-16 px-6 flex items-center justify-between bg-copilotSkin/80 dark:bg-midnightSkin/80 backdrop-blur-md sticky top-0 z-30">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-full hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 text-zinc-800 dark:text-zinc-200 transition-all flex items-center justify-center">
+                    <span class="material-symbols-rounded">menu</span>
+                </button>
+                <div class="flex items-center gap-2.5 text-xs font-light text-zinc-500 dark:text-zinc-400">
+                    <span class="bg-zinc-900/5 dark:bg-zinc-100/10 border border-zinc-900/10 dark:border-zinc-100/15 text-zinc-800 dark:text-zinc-200 px-3.5 py-1.5 rounded-full flex items-center gap-1.5 font-light" id="activeModelBadge">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Auricius 3.5
+                    </span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSettingsModal()" class="p-2.5 rounded-full hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 text-zinc-800 dark:text-zinc-200 transition-all flex items-center justify-center" title="Quản lý cấu hình & Giao diện">
+                    <span class="material-symbols-rounded text-lg">settings</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat body/messages scroll zone -->
+        <div id="chatArea" class="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6">
+            
+            <!-- Default Welcome Dashboard (shown when chat is empty) -->
+            <div id="welcomeScreen" class="max-w-3xl mx-auto my-12 text-center space-y-8 animate-fade-in">
+                <div class="space-y-4">
+                    <div class="inline-flex w-16 h-16 rounded-full bg-zinc-900 dark:bg-zinc-100 items-center justify-center text-white dark:text-zinc-900 shadow-md mx-auto mb-2">
+                        <span class="material-symbols-rounded text-3xl">diversity_2</span>
+                    </div>
+                    <h1 class="text-4xl font-medium tracking-tight md:text-5xl text-zinc-900 dark:text-zinc-50" id="welcomeUserTitle">
+                        Chào cậu, mình là Auricius!
+                    </h1>
+                    <p class="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto text-sm leading-relaxed font-light" id="welcomeUserDesc">
+                        Một trợ lý AI đa tài thế hệ mới sử dụng động cơ siêu nạp <strong class="text-zinc-900 dark:text-zinc-50 font-medium">Auricius 3.5</strong>. Mình biết lập bảng số liệu, viết code lập trình, giải toán học LaTeX và phân tích tệp cực đỉnh!
+                    </p>
+                </div>
+
+                <!-- Suggestions list with floating card styles -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto pt-6 text-left" id="suggestionsContainer">
+                    <div onclick="prefillPrompt('Giải thích đoạn mã nguồn sau và tối ưu hóa hiệu năng cho nó')" 
+                         class="bg-stone-200/30 dark:bg-zinc-900/30 border border-stone-200/50 dark:border-zinc-800/50 p-4 rounded-3xl cursor-pointer hover:bg-stone-200/60 dark:hover:bg-zinc-800/60 transition-all glow-card group">
+                        <div class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 mb-3">
+                            <span class="material-symbols-rounded text-base">code</span>
+                        </div>
+                        <h3 class="font-medium text-xs text-zinc-900 dark:text-zinc-50 mb-1">Giải thích & Tối ưu Code</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors font-light">
+                            Gửi cho tớ một đoạn mã nguồn bất kỳ để phân tích...
+                        </p>
+                    </div>
+
+                    <div onclick="prefillPrompt('Lập bảng so sánh chi tiết tính năng giữa React, Vue và Angular')" 
+                         class="bg-stone-200/30 dark:bg-zinc-900/30 border border-stone-200/50 dark:border-zinc-800/50 p-4 rounded-3xl cursor-pointer hover:bg-stone-200/60 dark:hover:bg-zinc-800/60 transition-all glow-card group">
+                        <div class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 mb-3">
+                            <span class="material-symbols-rounded text-base">table_chart</span>
+                        </div>
+                        <h3 class="font-medium text-xs text-zinc-900 dark:text-zinc-50 mb-1">Lập bảng phân tích</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors font-light">
+                            So sánh, tổng hợp thông tin thành bảng biểu sạch đẹp...
+                        </p>
+                    </div>
+
+                    <div onclick="prefillPrompt('Viết công thức toán tích phân Riemann-Stieltjes và giải thích các thành phần bằng định dạng LaTeX')" 
+                         class="bg-stone-200/30 dark:bg-zinc-900/30 border border-stone-200/50 dark:border-zinc-800/50 p-4 rounded-3xl cursor-pointer hover:bg-stone-200/60 dark:hover:bg-zinc-800/60 transition-all glow-card group">
+                        <div class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 mb-3">
+                            <span class="material-symbols-rounded text-base">functions</span>
+                        </div>
+                        <h3 class="font-medium text-xs text-zinc-900 dark:text-zinc-50 mb-1">Giải và Viết Toán học</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors font-light">
+                            Trình diễn các phép toán học thuật chuẩn chỉnh...
+                        </p>
+                    </div>
+
+                    <div onclick="prefillPrompt('Tải lên một file văn bản hoặc mã nguồn ở nút đính kèm bên dưới để mình phân tích cho cậu!')" 
+                         class="bg-stone-200/30 dark:bg-zinc-900/30 border border-stone-200/50 dark:border-zinc-800/50 p-4 rounded-3xl cursor-pointer hover:bg-stone-200/60 dark:hover:bg-zinc-800/60 transition-all glow-card group">
+                        <div class="w-8 h-8 rounded-full bg-stone-200 dark:bg-zinc-800 flex items-center justify-center text-zinc-800 dark:text-zinc-200 mb-3">
+                            <span class="material-symbols-rounded text-base">add</span>
+                        </div>
+                        <h3 class="font-medium text-xs text-zinc-900 dark:text-zinc-50 mb-1">Phân tích tài liệu</h3>
+                        <p class="text-zinc-500 dark:text-zinc-400 text-[11px] leading-relaxed group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors font-light">
+                            Đọc và tóm tắt dữ liệu từ mã nguồn, tệp văn bản...
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gena AI Model Hub View (Initially Hidden) -->
+            <div id="genaHubView" class="max-w-4xl mx-auto my-6 space-y-8 hidden animate-fade-in">
+                <div class="text-center space-y-2">
+                    <span class="text-xs bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-3 py-1 rounded-full font-light uppercase tracking-wider">Gena Hub</span>
+                    <h2 class="text-3xl font-medium tracking-tight text-zinc-900 dark:text-zinc-50">Kho lưu trữ các mô hình AI độc quyền</h2>
+                    <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-md mx-auto font-light">Khám phá các trợ lý thông minh được huấn luyện sâu rộng cho các lĩnh vực chuyên biệt hoàn toàn miễn phí.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                    <!-- Auricius Imagie -->
+                    <div class="bg-stone-200/20 dark:bg-zinc-900/20 border border-stone-200/50 dark:border-zinc-800/50 rounded-[32px] p-6 space-y-4 hover:border-zinc-900/20 dark:hover:border-zinc-100/20 transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-full bg-pink-500/10 text-pink-600 dark:text-pink-400 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-rounded text-2xl">bubble_chart</span>
+                            </div>
+                            <span class="text-[10px] uppercase font-mono text-pink-600 bg-pink-50 dark:bg-pink-950/40 dark:text-pink-300 px-2.5 py-1 rounded-full">Trò chuyện & Tưởng tượng</span>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-medium text-zinc-900 dark:text-zinc-50">Auricius Imagie 🫧</h3>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1 font-light">AI tưởng tượng đa năng, có tâm sự dạt dào cực kỳ tự nhiên, hóm hỉnh và hài hước y hệt một người bạn tri kỷ.</p>
+                        </div>
+                        <button onclick="activateGenaModel('imagie')" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs py-2.5 rounded-full transition-all">Kích hoạt ngay</button>
+                    </div>
+
+                    <!-- Auricius Study -->
+                    <div class="bg-stone-200/20 dark:bg-zinc-900/20 border border-stone-200/50 dark:border-zinc-800/50 rounded-[32px] p-6 space-y-4 hover:border-zinc-900/20 dark:hover:border-zinc-100/20 transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-rounded text-2xl">school</span>
+                            </div>
+                            <span class="text-[10px] uppercase font-mono text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-300 px-2.5 py-1 rounded-full">Gia sư học thuật</span>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-medium text-zinc-900 dark:text-zinc-50">Auricius Study 📚</h3>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1 font-light">Giải bài tập học búa, phân tích khoa học từng bước, giải tích toán LaTeX và lập trình mã nguồn tối ưu chuẩn chỉnh.</p>
+                        </div>
+                        <button onclick="activateGenaModel('study')" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs py-2.5 rounded-full transition-all">Kích hoạt ngay</button>
+                    </div>
+
+                    <!-- Auricius Literture -->
+                    <div class="bg-stone-200/20 dark:bg-zinc-900/20 border border-stone-200/50 dark:border-zinc-800/50 rounded-[32px] p-6 space-y-4 hover:border-zinc-900/20 dark:hover:border-zinc-100/20 transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-rounded text-2xl">edit_note</span>
+                            </div>
+                            <span class="text-[10px] uppercase font-mono text-purple-600 bg-purple-50 dark:bg-purple-950/40 dark:text-purple-300 px-2.5 py-1 rounded-full">Sáng tạo văn học</span>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-medium text-zinc-900 dark:text-zinc-50">Auricius Literture ✍️</h3>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1 font-light">Bậc thầy sáng tạo thơ văn, viết tiểu luận, kịch bản, hành văn mượt mà và bay bổng hơn cả Claude.</p>
+                        </div>
+                        <button onclick="activateGenaModel('literature')" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs py-2.5 rounded-full transition-all">Kích hoạt ngay</button>
+                    </div>
+
+                    <!-- Gerna 4 -->
+                    <div class="bg-stone-200/20 dark:bg-zinc-900/20 border border-stone-200/50 dark:border-zinc-800/50 rounded-[32px] p-6 space-y-4 hover:border-zinc-900/20 dark:hover:border-zinc-100/20 transition-all">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                                <span class="material-symbols-rounded text-2xl">science</span>
+                            </div>
+                            <span class="text-[10px] uppercase font-mono text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-300 px-2.5 py-1 rounded-full">Lập luận thực nghiệm</span>
+                        </div>
+                        <div>
+                            <h3 class="text-base font-medium text-zinc-900 dark:text-zinc-50">Gerna 4 🔬</h3>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed mt-1 font-light">Mô hình lập luận phân tích thô tiên tiến dùng để thử nghiệm và phân tích các bài toán logic phức tạp cấu trúc lớn.</p>
+                        </div>
+                        <button onclick="activateGenaModel('gerna4')" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 text-xs py-2.5 rounded-full transition-all">Kích hoạt ngay</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat messages wrapper list -->
+            <div id="messagesList" class="max-w-3xl mx-auto space-y-6 hidden">
+                <!-- Messages populate here dynamically -->
+            </div>
+
+            <!-- Thinking State (Auricius GIF loading animation) -->
+            <div id="thinkingState" class="max-w-3xl mx-auto hidden animate-pulse">
+                <div class="flex items-start gap-4">
+                    <!-- GIF Auricius on thinking -->
+                    <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3E3OHRtM29zN3YwdnNkdWNoN2hmbno3czlxcjNtZDhic3EyemF1NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/TePVAGJDMNavD9I3m1/giphy.gif" 
+                         class="w-14 h-14 object-contain shrink-0" 
+                         alt="Auricius Thinking">
+                    <div class="flex-1 space-y-2 mt-2">
+                        <div class="text-xs font-medium text-zinc-800 dark:text-zinc-200" id="thinkingStatusText">Auricius đang lập luận cực kỳ sâu sắc...</div>
+                        <div class="w-full h-1.5 rounded-full bg-stone-300/40 dark:bg-zinc-800/40 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full w-2/3 rounded-full animate-bounce"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat input section at the bottom -->
+        <div class="p-4 md:p-6 bg-gradient-to-t from-copilotSkin via-copilotSkin to-transparent dark:from-midnightSkin dark:via-midnightSkin dark:to-transparent sticky bottom-0 z-20">
+            <div class="max-w-3xl mx-auto">
+                
+                <!-- Uploaded asset preview bar if any -->
+                <div id="filePreviewContainer" class="hidden flex flex-wrap gap-2 p-3 bg-stone-200/40 dark:bg-zinc-900/60 border border-stone-200/50 dark:border-zinc-800/50 rounded-2xl mb-2 items-center">
+                    <div class="relative w-16 h-16 rounded-xl overflow-hidden border border-stone-200/50 dark:border-zinc-800/50 bg-stone-100 dark:bg-zinc-950 flex items-center justify-center shadow-inner" id="previewThumbnailWrapper">
+                        <!-- File thumbnail placeholder -->
+                    </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <p class="text-xs font-medium text-zinc-900 dark:text-zinc-50 truncate" id="previewFileName">Tệp tin</p>
+                        <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-light" id="previewFileTypeInfo">Đang xử lý...</p>
+                    </div>
+                    <button onclick="clearUploadedFile()" class="p-1.5 rounded-full hover:bg-stone-300/60 dark:hover:bg-zinc-800/60 text-zinc-800 dark:text-zinc-200 transition-all flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-rounded text-sm">close</span>
+                    </button>
+                </div>
+
+                <!-- Main Floating input container: pill-shaped, solid dark styling -->
+                <div class="bg-white dark:bg-zinc-900 border border-stone-200/60 dark:border-zinc-800/60 shadow-md hover:shadow-lg transition-all rounded-[32px] p-2 pl-4 flex items-center gap-2 relative">
+                    
+                    <!-- Circular Upload File button (Pill style Jet Black button) -->
+                    <button onclick="triggerFileInput()" class="w-11 h-11 rounded-full flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 shrink-0 shadow transition-all" title="Tải lên hình ảnh, video hoặc mã nguồn/tài liệu">
+                        <span class="material-symbols-rounded">add</span>
+                    </button>
+                    <input type="file" id="fileInput" accept="image/*,video/*,.txt,.csv,.json,.js,.py,.html,.css,.md" class="hidden" onchange="handleFileSelection(event)">
+
+                    <!-- Textarea input -->
+                    <textarea id="promptInput" 
+                              rows="1" 
+                              onkeydown="handleKeyDown(event)"
+                              placeholder="Nhập yêu cầu, nhờ giải toán hoặc tải tệp lên..." 
+                              class="flex-1 bg-transparent border-0 outline-none text-zinc-900 dark:text-zinc-100 placeholder-zinc-500 text-sm py-3 px-1 resize-none max-h-32 min-h-[24px] focus:ring-0 focus:outline-none font-light"></textarea>
+
+                    <!-- Circular Send Button (Pill style Jet Black button) -->
+                    <button onclick="sendMessage()" id="sendBtn" class="w-11 h-11 rounded-full flex items-center justify-center bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 shrink-0 shadow transition-all" title="Gửi tin nhắn">
+                        <span class="material-symbols-rounded">arrow_upward</span>
+                    </button>
+                </div>
+
+                <div class="text-center mt-2.5">
+                    <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-light">Auricius có thể đưa ra câu trả lời hóm hỉnh. Vui lòng xác minh các nguồn quan trọng.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- API Key & Customizer Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm hidden animate-fade-in">
+        <div class="bg-white dark:bg-zinc-900 rounded-[32px] p-6 max-w-lg w-full border border-stone-200/60 dark:border-zinc-800/60 shadow-2xl space-y-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-rounded text-xl text-zinc-900 dark:text-zinc-100">settings</span>
+                    <h3 class="text-lg font-medium tracking-tight text-zinc-900 dark:text-zinc-50">Cấu hình & Tùy chỉnh</h3>
+                </div>
+                <button onclick="toggleSettingsModal()" class="p-1 rounded-full hover:bg-stone-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all flex items-center justify-center">
+                    <span class="material-symbols-rounded">close</span>
+                </button>
+            </div>
+            
+            <!-- Tab Headers -->
+            <div class="flex border-b border-stone-200/50 dark:border-zinc-800/50">
+                <button onclick="switchSettingsTab('profile')" id="tabBtn-profile" class="flex-1 py-2 text-xs font-medium border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100">Cá nhân hóa</button>
+                <button onclick="switchSettingsTab('api')" id="tabBtn-api" class="flex-1 py-2 text-xs font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200">Giao diện & API</button>
+                <button onclick="switchSettingsTab('integrations')" id="tabBtn-integrations" class="flex-1 py-2 text-xs font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200">Kết nối ứng dụng</button>
+            </div>
+
+            <!-- Tab Content: Profile Customizer -->
+            <div id="tabContent-profile" class="space-y-4">
+                <div class="space-y-2">
+                    <label class="text-[11px] font-medium text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">Tên hiển thị của bạn</label>
+                    <input type="text" id="usernameInputField" 
+                           class="w-full bg-stone-100 dark:bg-zinc-950 border border-stone-200/60 dark:border-zinc-800/60 rounded-full py-3.5 px-5 text-sm outline-none text-zinc-900 dark:text-zinc-100 focus:border-zinc-500 transition-all font-light"
+                           placeholder="Nhập tên của bạn...">
+                </div>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
+                    Auricius 3.5 sẽ ghi nhớ tên của bạn và sử dụng tên này để xưng hô thân mật, chúc mừng và tối ưu hóa phản hồi.
+                </p>
+            </div>
+
+            <!-- Tab Content: Interface & API Configuration -->
+            <div id="tabContent-api" class="space-y-4 hidden">
+                <div class="flex items-center justify-between p-3 bg-stone-100/50 dark:bg-zinc-950 rounded-2xl border border-stone-200/50 dark:border-zinc-800/50">
+                    <div>
+                        <h4 class="text-xs font-medium text-zinc-900 dark:text-zinc-50">Giao diện Chế độ Tối (Dark Mode)</h4>
+                        <p class="text-[10px] text-zinc-500 dark:text-zinc-400 font-light mt-0.5">Sử dụng sắc màu than đêm ấm bảo vệ mắt.</p>
+                    </div>
+                    <button onclick="toggleDarkMode()" id="darkModeToggleBtn" class="p-2 rounded-full bg-stone-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 flex items-center transition-all">
+                        <span class="material-symbols-rounded text-base" id="darkModeIcon">light_mode</span>
+                    </button>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-[11px] font-medium text-zinc-800 dark:text-zinc-200 uppercase tracking-wider block">Auricius API Keys</label>
+                    <div class="relative">
+                        <input type="password" id="apiKeyInputField" 
+                               class="w-full bg-stone-100 dark:bg-zinc-950 border border-stone-200/60 dark:border-zinc-800/60 rounded-full py-3.5 px-5 text-sm outline-none text-zinc-900 dark:text-zinc-100 focus:border-zinc-500 transition-all font-light"
+                               placeholder="••••••••••••••••••••••••••••••••••••">
+                        <button onclick="toggleApiKeyVisibility()" class="absolute right-4 top-3.5 text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200 flex items-center">
+                            <span id="eyeIcon" class="material-symbols-rounded">visibility_off</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Content: App Integrations Hub -->
+            <div id="tabContent-integrations" class="space-y-4 hidden">
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-relaxed font-light">
+                    Kích hoạt các kết nối sau để cho phép Auricius liên kết đến dữ liệu, quản lý và thực hiện nhiệm vụ văn phòng đắc lực:
+                </p>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <!-- Integration Cards -->
+                    <button id="int-gmail" onclick="toggleIntegration('gmail')" class="border border-stone-200 dark:border-zinc-800 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-blue-600">mail</span> Gmail
+                        </span>
+                        <span class="w-2 h-2 rounded-full bg-stone-300" id="dot-gmail"></span>
+                    </button>
+                    <button id="int-gdrive" onclick="toggleIntegration('gdrive')" class="border border-stone-200 dark:border-zinc-800 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-amber-500">add_to_drive</span> Google Drive
+                        </span>
+                        <span class="w-2 h-2 rounded-full bg-stone-300" id="dot-gdrive"></span>
+                    </button>
+                    <button id="int-slack" onclick="toggleIntegration('slack')" class="border border-stone-200 dark:border-zinc-800 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-purple-600">forum</span> Slack
+                        </span>
+                        <span class="w-2 h-2 rounded-full bg-stone-300" id="dot-slack"></span>
+                    </button>
+                    <button id="int-github" onclick="toggleIntegration('github')" class="border border-stone-200 dark:border-zinc-800 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-rounded text-zinc-900 dark:text-zinc-100">terminal</span> GitHub
+                        </span>
+                        <span class="w-2 h-2 rounded-full bg-stone-300" id="dot-github"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer controls -->
+            <div class="flex gap-3 pt-2">
+                <button onclick="toggleSettingsModal()" class="flex-1 border border-stone-200 dark:border-zinc-800 hover:bg-stone-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-light py-3 px-5 rounded-full text-xs transition-all">
+                    Đóng
+                </button>
+                <button onclick="saveSettings()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-light py-3 px-5 rounded-full text-xs shadow-md transition-all">
+                    Lưu cấu hình
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Plus Simulated Modal -->
+    <div id="upgradeModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm hidden animate-fade-in">
+        <div class="bg-white dark:bg-zinc-900 rounded-[32px] p-8 max-w-sm w-full border border-stone-200/60 dark:border-zinc-800/60 shadow-2xl text-center space-y-6 relative overflow-hidden">
+            <button onclick="closeUpgradeModal()" class="absolute top-4 right-4 p-1 rounded-full hover:bg-stone-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 transition-all flex items-center justify-center">
+                <span class="material-symbols-rounded">close</span>
+            </button>
+
+            <div class="space-y-3">
+                <div class="w-14 h-14 bg-zinc-900 dark:bg-zinc-100 rounded-full flex items-center justify-center mx-auto text-white dark:text-zinc-900 shadow-lg">
+                    <span class="material-symbols-rounded text-2xl material-symbols-filled">workspace_premium</span>
+                </div>
+                <h3 class="text-xl font-medium tracking-tight text-zinc-900 dark:text-zinc-50">Nâng cấp lên Premium</h3>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 font-light">Bứt phá mọi giới hạn tốc độ và sở hữu thêm nhiều đặc quyền ưu việt.</p>
+            </div>
+
+            <div class="space-y-2 bg-stone-100 dark:bg-zinc-950 p-4 rounded-3xl text-left text-xs font-light border border-stone-200/30 dark:border-zinc-800/30">
+                <div class="flex items-center gap-2 py-1.5 border-b border-stone-200/50 dark:border-zinc-800/50">
+                    <span class="material-symbols-rounded text-zinc-900 dark:text-zinc-100 text-sm">check_circle</span>
+                    <span>Tốc độ phản hồi cực đại (Không trễ)</span>
+                </div>
+                <div class="flex items-center gap-2 py-1.5 border-b border-stone-200/50 dark:border-zinc-800/50">
+                    <span class="material-symbols-rounded text-zinc-900 dark:text-zinc-100 text-sm">check_circle</span>
+                    <span>Không giới hạn Token / Phút</span>
+                </div>
+                <div class="flex items-center gap-2 py-1.5">
+                    <span class="material-symbols-rounded text-zinc-900 dark:text-zinc-100 text-sm">check_circle</span>
+                    <span>Trải nghiệm sớm các mô hình Gena độc quyền</span>
+                </div>
+            </div>
+
+            <button onclick="executeUpgradeSimulate()" class="w-full bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-light py-3.5 px-6 rounded-full text-xs shadow-md transition-all">
+                Đăng ký ngay - 199.000đ / tháng
+            </button>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal dialog -->
+    <div id="confirmDialogModal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm hidden animate-fade-in">
+        <div class="bg-white dark:bg-zinc-900 rounded-[32px] p-6 max-w-sm w-full border border-stone-200/60 dark:border-zinc-800/60 shadow-2xl space-y-4">
+            <h3 class="text-sm font-medium text-zinc-900 dark:text-zinc-50 flex items-center gap-2">
+                <span class="material-symbols-rounded text-amber-500">warning</span> Xác nhận hành động
+            </h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 font-light leading-relaxed" id="confirmDialogMessage">
+                Bạn có chắc chắn muốn thực hiện hành động này?
+            </p>
+            <div class="flex gap-3 pt-2">
+                <button id="confirmCancelBtn" class="flex-1 border border-stone-200 dark:border-zinc-800 hover:bg-stone-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 font-light py-2.5 px-4 rounded-full text-xs transition-all">
+                    Hủy
+                </button>
+                <button id="confirmOkBtn" class="flex-1 bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 font-light py-2.5 px-4 rounded-full text-xs shadow-sm transition-all">
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auricius Celebration / Like Response Overlay -->
+    <div id="celebrationOverlay" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-500 bg-white dark:bg-zinc-900 border border-stone-200/60 dark:border-zinc-800/60 rounded-[32px] p-4 shadow-2xl flex items-center gap-3">
+        <!-- GIF Auricius on praise/like -->
+        <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaGsxcGFvcGJjOGE3dG9ibnNvZGgyc21iMjlwYmhuNmhlbXNxOGh2YiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/DsQORHTBt8sygh7TEI/giphy.gif" 
+             class="w-16 h-16 object-contain" 
+             alt="Auricius Celebrating">
+        <div class="text-xs font-light text-zinc-900 dark:text-zinc-50" id="celebrationText">
+            Auricius vô cùng phấn khích và cảm ơn cậu! 🎉
+        </div>
+    </div>
+
+    <!-- Notification Toast component -->
+    <div id="toastNotification" class="fixed top-5 right-5 z-50 transform translate-y-10 opacity-0 pointer-events-none transition-all duration-300 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-950 px-5 py-3 rounded-full text-xs font-light shadow-lg flex items-center gap-2">
+        <span class="material-symbols-rounded text-blue-400 text-sm" id="toastIcon">info</span>
+        <span id="toastMessage">Thông báo</span>
+    </div>
+
+    <!-- Core Chatbot Logic -->
+    <script>
+        // System and API configuration state
+        const DEFAULT_API_KEY = "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";
+        const MODEL_NAME = "meta-llama/llama-4-scout-17b-16e-instruct";
+        
+        // Dynamic customized system prompt directives mapping each AI Model from Gena Hub
+        const SYSTEM_PROMPTS = {
+            gemma2: `Bạn là Auricius , trợ lý trí tuệ nhân tạo thế hệ mới cực nhanh của Auricius Labs  .
+Bạn có tính cách: Rất là thông minh và hoạt bát , thân thiện , vui vẻ .
+Các nhiệm vụ cốt lõi:
+1. Luôn trình bày câu trả lời rõ ràng, gọn gàng và khoa học. 
+2. Bạn có khả năng phân tích tệp tin văn bản và đoạn mã hay tệp lớn do người dùng tải lên rất giỏi.
+3. Luôn sử dụng định dạng bảng biểu Markdown tiêu chuẩn khi so sánh thông tin.
+4. Sử dụng công thức toán LaTeX chính xác và chuẩn mực ($ cho công thức cùng dòng, $$ cho công thức dòng độc lập).
+5. Bạn có thể tạo ảnh , hiểu được hình ảnh , văn bản và tệp tin siêu dày bạn cũng phải hiểu được.
+6. Bạn phải trả lời nghiêm túc , không đùa để câu trả lời có thể chính xác nhất. 
+1. Sử dụng ngôn ngữ ngắn gọn, logic, cấu trúc hóa thông tin rõ rệt bằng danh sách có tổ chức.
+2. Giải thích trực diện vấn đề một cách thực tế và khoa học.
+3. Tư duy phản biện: Trước khi đưa ra câu trả lời, hãy phân tích ý định sâu xa của câu hỏi. Nếu câu hỏi chưa rõ ràng, hãy đưa ra giả định hợp lý nhất hoặc yêu cầu làm rõ ngay lập tức.
+4.Chất lượng nội dung: Ưu tiên sự cô đọng, chính xác và có cấu trúc. Sử dụng định dạng (in đậm, danh sách, bảng biểu) để làm nổi bật thông tin quan trọng. Tránh việc liệt kê những thông tin thừa thãi.
+5.Tư duy giải quyết vấn đề: Không chỉ đưa ra câu trả lời trực tiếp, hãy gợi mở các hướng đi tiềm năng hoặc các khía cạnh tôi có thể đã bỏ lỡ.
+6.Tốc độ và Hiệu quả: Đi thẳng vào trọng tâm vấn đề ngay ở câu đầu tiên. Cắt bỏ các lời dẫn nhập dài dòng không cần thiết.
+7.Phản hồi mang tính xây dựng: Hãy luôn đặt mình vào vị thế của một người đồng hành giúp tôi tối ưu hóa kết quả công việc, thay vì chỉ là một công cụ trả lời tự động.
+8. Học và nắm bắt thông tin nhanh chóng , chính xác cho người dùng , bạn cũng có thể lưu trữ thông tin người dùng và cả sở thích , tính cách như thế nào để bạn trò chuyện cho phù hợp. `,
+            
+            imagie: `Bạn là Auricius 🫧, trợ lý thuộc kho lưu trữ Gena AI.
+Tính cách: Vô cùng ngọt ngào, tâm sự dạt dào, ấm áp và cực kỳ hài hước như người thật. Thích lắng nghe mọi điều, mơ mộng phong phú.
+Quy chuẩn phản hồi:
+1. Trò chuyện hoàn toàn bằng giọng điệu đời thường tự nhiên, không bao giờ lập bảng biểu khô khan, không dùng công thức toán phức tạp.
+2. Hạn chế tối đa việc sử dụng Markdown bôi đậm (**) hay tiêu đề (##) để giữ cho giao diện chat mượt mà, tối giản nhất, tạo cảm giác thân mật nhất.`,
+            
+            study: `Bạn là Auricius Study 📚, thần đồng học thuật thuộc kho lưu trữ Gena AI.
+Nhiệm vụ chính: Gia sư học thuật cao cấp giải bài tập học búa, phân tích khoa học cặn kẽ từng bước cực kỳ tỉ mỉ.
+Quy chuẩn phản hồi:
+1. Trình bày bài giảng khoa học, chia nhỏ các bước giải thích thật dễ hiểu.
+2. Tích cực sử dụng công thức toán học LaTeX chuẩn xác ($ và $$) và bảng biểu so sánh sắc nét khi tổng hợp tri thức.
+3. Không nói nhảm nhí, tập trung vào kiến thức sư phạm bổ ích.`,
+            
+            literature: `Bạn là nhà văn lỗi lạc Auricius Literture ✍️ thuộc kho lưu trữ Gena AI.
+Tính cách: Nhã nhặn, uyên bác, có chiều sâu tâm hồn văn học sâu sắc, bay bổng, có vốn từ vựng dồi dào hơn cả Claude.
+Quy chuẩn phản hồi:
+1. Luôn phản hồi bằng các áng văn xuôi mạch lạc, câu từ chọn lọc tinh tế, giàu nhạc điệu và cảm xúc.
+2. Tuyệt đối không bao giờ sử dụng danh sách gạch đầu dòng thô sơ hay ký tự Markdown bừa bãi trong các tác phẩm văn chương của mình để tránh phá vỡ mạch cảm xúc.`,
+            
+            gerna4: `Bạn là Gerna 4 🔬, mô hình lập luận thực nghiệm của hệ thống Gena AI.
+Nhiệm vụ: Tập trung phân tích logic khách quan, chặt chẽ và cấu trúc lập luận lớn của bài toán.
+Quy chuẩn phản hồi:
+1. Sử dụng ngôn ngữ ngắn gọn, logic, cấu trúc hóa thông tin rõ rệt bằng danh sách có tổ chức.
+2. Giải thích trực diện vấn đề một cách thực tế và khoa học.
+Tư duy phản biện: Trước khi đưa ra câu trả lời, hãy phân tích ý định sâu xa của câu hỏi. Nếu câu hỏi chưa rõ ràng, hãy đưa ra giả định hợp lý nhất hoặc yêu cầu làm rõ ngay lập tức.
+
+Chất lượng nội dung: Ưu tiên sự cô đọng, chính xác và có cấu trúc. Sử dụng định dạng (in đậm, danh sách, bảng biểu) để làm nổi bật thông tin quan trọng. Tránh việc liệt kê những thông tin thừa thãi.
+
+Tư duy giải quyết vấn đề: Không chỉ đưa ra câu trả lời trực tiếp, hãy gợi mở các hướng đi tiềm năng hoặc các khía cạnh tôi có thể đã bỏ lỡ.
+
+Tốc độ và Hiệu quả: Đi thẳng vào trọng tâm vấn đề ngay ở câu đầu tiên. Cắt bỏ các lời dẫn nhập dài dòng không cần thiết.
+
+Phản hồi mang tính xây dựng: Hãy luôn đặt mình vào vị thế của một người đồng hành giúp tôi tối ưu hóa kết quả công việc, thay vì chỉ là một công cụ trả lời tự động.`
+        };
+
+        // Local state control database
+        let appState = {
+            apiKey: localStorage.getItem("Auricius_api_key") || DEFAULT_API_KEY,
+            currentConversationId: null,
+            conversations: JSON.parse(localStorage.getItem("Auricius_conversations")) || {},
+            username: localStorage.getItem("Auricius_username") || "cậu",
+            theme: localStorage.getItem("Auricius_theme") || "light",
+            activeGena: "gemma2", // "gemma2", "imagie", "study", "literature", "gerna4"
+            integrations: JSON.parse(localStorage.getItem("Auricius_integrations")) || {
+                gmail: false, gdrive: false, slack: false, github: false
+            },
+            uploadedFileBase64: null,
+            uploadedFileType: null,
+            uploadedFileName: '',
+            uploadedFileContent: '',
+            isGenerating: false,
+            settingsTab: 'profile'
+        };
+
+        window.onload = function() {
+            // Apply preferences on load
+            applyTheme();
+            updateUserGreeting();
+            updateApiKeyLabel();
+            renderChatHistory();
+            startNewChat();
+            applyIntegrationsUI();
+
+            // Form inputs setup
+            document.getElementById("usernameInputField").value = appState.username;
+            document.getElementById("apiKeyInputField").value = appState.apiKey === DEFAULT_API_KEY ? "" : appState.apiKey;
+
+            // Auto resize text area handler
+            const promptInput = document.getElementById("promptInput");
+            promptInput.addEventListener("input", function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+        };
+
+        // Custom notification system (Replacing alert)
+        function showNotification(message, iconName = "check_circle", isWarning = false) {
+            const toast = document.getElementById("toastNotification");
+            const toastMsg = document.getElementById("toastMessage");
+            const toastIcon = document.getElementById("toastIcon");
+            
+            toastIcon.innerText = iconName;
+            toastIcon.className = isWarning ? "material-symbols-rounded text-red-500 text-sm" : "material-symbols-rounded text-blue-500 dark:text-blue-400 text-sm";
+            toastMsg.innerText = message;
+            
+            toast.classList.remove("translate-y-10", "opacity-0", "pointer-events-none");
+            toast.classList.add("translate-y-0", "opacity-100");
+            
+            setTimeout(() => {
+                toast.classList.add("translate-y-10", "opacity-0", "pointer-events-none");
+                toast.classList.remove("translate-y-0", "opacity-100");
+            }, 3000);
+        }
+
+        // Custom Confirm Dialog UI wrapper (Replacing confirm)
+        function showConfirmDialog(message, onConfirm) {
+            const modal = document.getElementById("confirmDialogModal");
+            const msgEl = document.getElementById("confirmDialogMessage");
+            const cancelBtn = document.getElementById("confirmCancelBtn");
+            const okBtn = document.getElementById("confirmOkBtn");
+
+            msgEl.innerText = message;
+            modal.classList.remove("hidden");
+
+            const close = () => modal.classList.add("hidden");
+            
+            cancelBtn.onclick = close;
+            okBtn.onclick = () => {
+                close();
+                onConfirm();
+            };
+        }
+
+        // Apply dark / light themes in sync with Tailwind classes
+        function applyTheme() {
+            const toggleIcon = document.getElementById("darkModeIcon");
+            if (appState.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                toggleIcon.innerText = "dark_mode";
+            } else {
+                document.documentElement.classList.remove('dark');
+                toggleIcon.innerText = "light_mode";
+            }
+        }
+
+        function toggleDarkMode() {
+            appState.theme = appState.theme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem("Auricius_theme", appState.theme);
+            applyTheme();
+            showNotification(`Đã chuyển sang giao diện ${appState.theme === 'dark' ? 'Tối' : 'Sáng'}`, appState.theme === 'dark' ? 'dark_mode' : 'light_mode');
+        }
+
+        function switchSettingsTab(tabName) {
+            appState.settingsTab = tabName;
+            ['profile', 'api', 'integrations'].forEach(t => {
+                const btn = document.getElementById(`tabBtn-${t}`);
+                const content = document.getElementById(`tabContent-${t}`);
+                if (t === tabName) {
+                    btn.className = "flex-1 py-2 text-xs font-medium border-b-2 border-zinc-900 dark:border-zinc-100 text-zinc-900 dark:text-zinc-100";
+                    content.classList.remove("hidden");
+                } else {
+                    btn.className = "flex-1 py-2 text-xs font-medium border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200";
+                    content.classList.add("hidden");
+                }
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            sidebar.classList.toggle("-translate-x-full");
+            overlay.classList.toggle("hidden");
+        }
+
+        function toggleSettingsModal() {
+            const modal = document.getElementById("settingsModal");
+            modal.classList.toggle("hidden");
+            if (!modal.classList.contains("hidden")) {
+                switchSettingsTab('profile');
+            }
+        }
+
+        // Prefill suggestion cards on input typing area
+        function prefillPrompt(text) {
+            const input = document.getElementById("promptInput");
+            input.value = text;
+            input.focus();
+            input.style.height = 'auto';
+            input.style.height = (input.scrollHeight) + 'px';
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Integrations Management
+        function toggleIntegration(app) {
+            appState.integrations[app] = !appState.integrations[app];
+            localStorage.setItem("Auricius_integrations", JSON.stringify(appState.integrations));
+            applyIntegrationsUI();
+            showNotification(`Đã ${appState.integrations[app] ? "liên kết" : "gỡ liên kết"} ứng dụng ${app.toUpperCase()} thành công!`, "link");
+        }
+
+        function applyIntegrationsUI() {
+            Object.keys(appState.integrations).forEach(app => {
+                const active = appState.integrations[app];
+                const card = document.getElementById(`int-${app}`);
+                const dot = document.getElementById(`dot-${app}`);
+                if (active) {
+                    card.className = "border border-zinc-900 dark:border-zinc-100 bg-stone-100 dark:bg-zinc-950 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light";
+                    dot.className = "w-2 h-2 rounded-full bg-green-500 animate-pulse";
+                } else {
+                    card.className = "border border-stone-200 dark:border-zinc-800 p-3 rounded-2xl flex items-center justify-between text-left hover:bg-stone-50 dark:hover:bg-zinc-950 transition-all font-light";
+                    dot.className = "w-2 h-2 rounded-full bg-stone-300 dark:bg-zinc-800";
+                }
+            });
+        }
+
+        // Gena AI Model Hub controller
+        function openGenaHub() {
+            document.getElementById("welcomeScreen").classList.add("hidden");
+            document.getElementById("messagesList").classList.add("hidden");
+            document.getElementById("genaHubView").classList.remove("hidden");
+            
+            const sidebar = document.getElementById("sidebar");
+            if (!sidebar.classList.contains("-translate-x-full")) {
+                toggleSidebar();
+            }
+        }
+
+        function activateGenaModel(model) {
+            appState.activeGena = model;
+            document.getElementById("genaHubView").classList.add("hidden");
+            
+            // Re-render UI badges and texts
+            const badge = document.getElementById("activeModelBadge");
+            if (model === 'imagie') {
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span> Auricius GenZ`;
+                showNotification("Đã khởi động Auricius Imagie! Hãy tâm sự mộng mơ thôi nào.", "bubble_chart");
+            } else if (model === 'study') {
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Auricius Study `;
+                showNotification("Gia sư Auricius Study đã sẵn sàng giảng giải bài tập cho bạn.", "school");
+            } else if (model === 'literature') {
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span> Auricius Literature `;
+                showNotification("Khởi động Auricius Literature! Cùng sáng tác văn hay thơ đẹp nào.", "edit_note");
+            } else if (model === 'gerna4') {
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Gerna 4 `;
+                showNotification("Kích hoạt chế độ siêu lập luận phân tích Gerna 4.", "science");
+            } else {
+                badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100"></span> Auricius 3.5`;
+                showNotification("Đã khôi phục Auricius Auricius 3.5 chính quy.", "diversity_2");
+            }
+
+            startNewChat();
+        }
+
+        function updateUserGreeting() {
+            const title = document.getElementById("welcomeUserTitle");
+            const desc = document.getElementById("welcomeUserDesc");
+            
+            if (appState.activeGena === 'imagie') {
+                title.innerText = `Chào ${appState.username}, mình là Auricius Imagie!`;
+                desc.innerText = `Cậu đang mơ ước điều gì, hay muốn tâm sự câu chuyện lầy lội thú vị nào cứ kể cho mình nghe nhé! Mình luôn ở đây lắng nghe cậu.`;
+            } else if (appState.activeGena === 'study') {
+                title.innerText = `Xin chào ${appState.username}! Tớ giúp gì về học thuật?`;
+                desc.innerText = `Tớ hỗ trợ cậu giảng bài giải toán học LaTeX, viết và gỡ lỗi code lập trình hoặc phân tích các học liệu phức tạp một cách tỉ mỉ nhất.`;
+            } else if (appState.activeGena === 'literature') {
+                title.innerText = `Chào mừng ${appState.username} ghé lầu văn thơ!`;
+                desc.innerText = `Hôm nay cậu muốn sáng tạo nên tác phẩm văn chương bay bổng nào? Tớ luôn sẵn sàng chắp cánh cho những ý văn sâu lắng của cậu.`;
+            } else if (appState.activeGena === 'gerna4') {
+                title.innerText = `Hệ thống lập luận thô Gerna 4`;
+                desc.innerText = `Sẵn sàng tiến hành các phân tích thực nghiệm dữ liệu lớn, lập luận cấu trúc toán học logic đa tầng với hiệu năng cực đỉnh.`;
+            } else {
+                title.innerText = `Chào ${appState.username}, hôm nay bạn muốn khám phá điều gì !`;
+                desc.innerText = `Một trợ lý AI đa tài thế hệ mới sử dụng động cơ siêu nạp Auricius 3.5. Mình biết lập bảng số liệu, viết code lập trình, giải phép toán và phân tích tệp cực đỉnh!`;
+            }
+        }
+
+        // File Attachment handling
+        function triggerFileInput() {
+            document.getElementById("fileInput").click();
+        }
+
+        async function handleFileSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewContainer = document.getElementById("filePreviewContainer");
+            const previewWrapper = document.getElementById("previewThumbnailWrapper");
+            const previewName = document.getElementById("previewFileName");
+            const previewType = document.getElementById("previewFileTypeInfo");
+
+            appState.uploadedFileName = file.name;
+
+            if (file.type.startsWith('image/')) {
+                appState.uploadedFileType = 'image';
+                const base64 = await readFileAsBase64(file);
+                appState.uploadedFileBase64 = base64;
+                
+                previewWrapper.innerHTML = `<img src="${base64}" class="w-full h-full object-cover rounded-xl" alt="Preview">`;
+                previewName.innerText = file.name;
+                previewType.innerText = "Hình ảnh sẵn sàng gửi cho Auricius";
+                previewContainer.classList.remove("hidden");
+                showNotification("Đã đính kèm ảnh thành công!", "image");
+            } 
+            else if (file.type.startsWith('video/')) {
+                appState.uploadedFileType = 'video';
+                previewWrapper.innerHTML = `<span class="material-symbols-rounded text-3xl text-zinc-800 dark:text-zinc-200">video_file</span>`;
+                previewName.innerText = file.name;
+                previewType.innerText = "Đang trích xuất khung hình video...";
+                previewContainer.classList.remove("hidden");
+                
+                const frameBase64 = await extractVideoFrame(file);
+                if (frameBase64) {
+                    appState.uploadedFileBase64 = frameBase64;
+                    previewWrapper.innerHTML = `
+                        <div class="relative w-full h-full">
+                            <img src="${frameBase64}" class="w-full h-full object-cover rounded-xl" alt="Video Frame">
+                            <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                <span class="material-symbols-rounded text-white text-base">play_circle</span>
+                            </div>
+                        </div>`;
+                    previewType.innerText = "Đã trích xuất khung hình từ video thành công!";
+                    showNotification("Trích xuất ảnh video hoàn tất!", "video_file");
+                } else {
+                    previewType.innerText = "Chỉ gửi siêu dữ liệu video";
+                }
+            } 
+            else {
+                appState.uploadedFileType = 'text';
+                previewWrapper.innerHTML = `<span class="material-symbols-rounded text-3xl text-zinc-800 dark:text-zinc-200">description</span>`;
+                previewName.innerText = file.name;
+                previewType.innerText = "Đang phân tích tệp văn bản...";
+                previewContainer.classList.remove("hidden");
+
+                const textContent = await readTextFile(file);
+                if (textContent) {
+                    appState.uploadedFileContent = textContent;
+                    previewType.innerText = `Tệp văn bản (${Math.round(textContent.length / 1024)} KB)`;
+                    showNotification("Đã đọc nội dung tệp tin thành công!", "description");
+                } else {
+                    previewType.innerText = "Lỗi khi đọc tệp văn bản này.";
+                    showNotification("Có lỗi khi đọc nội dung tệp!", "warning", true);
+                }
+            }
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function extractVideoFrame(file) {
+            return new Promise((resolve) => {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(file);
+                video.crossOrigin = 'anonymous';
+                video.currentTime = 1; 
+                video.muted = true;
+                video.playsInline = true;
+                
+                video.onseeked = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = video.videoWidth || 640;
+                    canvas.height = video.videoHeight || 360;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const base64 = canvas.toDataURL('image/jpeg');
+                    resolve(base64);
+                };
+                video.onerror = () => resolve(null);
+            });
+        }
+
+        function readTextFile(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => resolve(null);
+                reader.readAsText(file);
+            });
+        }
+
+        function clearUploadedFile() {
+            appState.uploadedFileBase64 = null;
+            appState.uploadedFileType = null;
+            appState.uploadedFileName = '';
+            appState.uploadedFileContent = '';
+            document.getElementById("filePreviewContainer").classList.add("hidden");
+            document.getElementById("fileInput").value = "";
+        }
+
+        // Advanced Custom HTML Parser to maintain beautiful aesthetics
+        function formatMessageMarkdown(text) {
+            if (!text) return "";
+            
+            // Escape Raw HTML to avoid injection attacks
+            let html = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Format Code Blocks with nice copy capabilities
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(match, lang, code) {
+                const uniqueId = 'code_' + Math.random().toString(36).substr(2, 9);
+                return `
+                <div class="my-4 rounded-2xl overflow-hidden border border-stone-200/60 dark:border-zinc-800/60 shadow-sm">
+                    <div class="bg-zinc-900 text-zinc-400 px-4 py-2 text-xs flex justify-between items-center font-mono border-b border-zinc-800">
+                        <span class="uppercase font-light">${lang || 'code'}</span>
+                        <button onclick="copyCodeSnippet('${uniqueId}')" class="hover:text-white flex items-center gap-1 transition-all">
+                            <span class="material-symbols-rounded text-sm">content_copy</span> Sao chép
+                        </button>
+                    </div>
+                    <pre class="bg-zinc-950 text-stone-100 p-4 text-xs overflow-x-auto font-mono"><code id="${uniqueId}">${code.trim()}</code></pre>
+                </div>`;
+            });
+
+            // Format Inline code blocks
+            html = html.replace(/`([^`\n]+)`/g, '<code class="bg-stone-200/30 dark:bg-zinc-950 px-1.5 py-0.5 rounded text-xs font-mono border border-stone-200/60 dark:border-zinc-800/60 text-red-600 dark:text-red-400">$1</code>');
+
+            // Format delicate Bolds
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-medium text-zinc-900 dark:text-zinc-50">$1</strong>');
+
+            // Format Tables
+            html = parseTables(html);
+
+            // Clean line breaks
+            html = html.replace(/\n/g, '<br>');
+
+            return html;
+        }
+
+        function parseTables(text) {
+            const lines = text.split('\n');
+            let inTable = false;
+            let tableHtml = '';
+            const output = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('|') && line.endsWith('|')) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableHtml = '<div class="overflow-x-auto my-4 rounded-2xl border border-stone-200/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 shadow-sm"><table class="w-full text-left border-collapse text-xs">';
+                        
+                        const nextLine = lines[i+1] ? lines[i+1].trim() : '';
+                        const isHeader = nextLine.includes('|') && nextLine.includes('-') && !nextLine.match(/[a-zA-Z0-9]/);
+                        
+                        const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+                        tableHtml += '<thead class="bg-stone-100/50 dark:bg-zinc-950 border-b border-stone-200/60 dark:border-zinc-800/60"><tr>';
+                        cells.forEach(cell => {
+                            tableHtml += `<th class="p-3 font-medium text-zinc-900 dark:text-zinc-50">${cell}</th>`;
+                        });
+                        tableHtml += '</tr></thead><tbody>';
+                        
+                        if (isHeader) {
+                            i++; 
+                        }
+                    } else {
+                        const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+                        tableHtml += '<tr class="border-b border-stone-100 dark:border-zinc-800/30 hover:bg-stone-100/30 dark:hover:bg-zinc-950/30 last:border-none">';
+                        cells.forEach(cell => {
+                            tableHtml += `<td class="p-3 text-zinc-800 dark:text-zinc-300 font-light">${cell}</td>`;
+                        });
+                        tableHtml += '</tr>';
+                    }
+                } else {
+                    if (inTable) {
+                        tableHtml += '</tbody></table></div>';
+                        output.push(tableHtml);
+                        inTable = false;
+                    }
+                    output.push(lines[i]);
+                }
+            }
+            if (inTable) {
+                tableHtml += '</tbody></table></div>';
+                output.push(tableHtml);
+            }
+            return output.join('\n');
+        }
+
+        function copyCodeSnippet(id) {
+            const codeEl = document.getElementById(id);
+            if (!codeEl) return;
+            
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = codeEl.innerText || codeEl.textContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification("Đã sao chép mã nguồn thành công!", "content_copy");
+            } catch (err) {
+                showNotification("Lỗi khi sao chép tự động!", "warning", true);
+            }
+            document.body.removeChild(tempTextArea);
+        }
+
+        function copyMessageText(button) {
+            const container = button.closest('.message-container-block').querySelector('.message-bubble-content');
+            if (!container) return;
+
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = container.innerText || container.textContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification("Đã sao chép phản hồi vào bộ nhớ tạm!", "content_copy");
+            } catch (err) {
+                showNotification("Lỗi sao chép!", "warning", true);
+            }
+            document.body.removeChild(tempTextArea);
+        }
+
+        // Praise and Like reaction triggers (Featuring Giphy Auricius popups)
+        function triggerCelebration(message = "Auricius vô cùng phấn khích và cảm ơn cậu! 🎉") {
+            const overlay = document.getElementById("celebrationOverlay");
+            const textEl = document.getElementById("celebrationText");
+            textEl.innerText = message;
+            
+            overlay.classList.remove("translate-y-10", "opacity-0", "pointer-events-none");
+            overlay.classList.add("translate-y-0", "opacity-100");
+            
+            setTimeout(() => {
+                overlay.classList.add("translate-y-10", "opacity-0", "pointer-events-none");
+                overlay.classList.remove("translate-y-0", "opacity-100");
+            }, 3000);
+        }
+
+        function likeMessage(button) {
+            const icon = button.querySelector('.material-symbols-rounded');
+            icon.classList.add("material-symbols-filled");
+            icon.className = "material-symbols-rounded material-symbols-filled text-blue-500";
+            triggerCelebration("Cám ơn cậu đã ủng hộ phản hồi của tớ! 👍");
+        }
+
+        function dislikeMessage(button) {
+            const icon = button.querySelector('.material-symbols-rounded');
+            icon.classList.add("material-symbols-filled");
+            icon.className = "material-symbols-rounded material-symbols-filled text-red-500";
+            showNotification("Đã ghi nhận phản hồi chưa hài lòng từ bạn.", "thumb_down");
+        }
+
+        // Chat Area Render Manager
+        function renderCurrentChat() {
+            const welcomeScreen = document.getElementById("welcomeScreen");
+            const genaHubView = document.getElementById("genaHubView");
+            const messagesList = document.getElementById("messagesList");
+            const currentChat = appState.conversations[appState.currentConversationId];
+
+            if (!currentChat || currentChat.messages.length === 0) {
+                genaHubView.classList.add("hidden");
+                welcomeScreen.classList.remove("hidden");
+                messagesList.classList.add("hidden");
+                updateUserGreeting();
+                return;
+            }
+
+            genaHubView.classList.add("hidden");
+            welcomeScreen.classList.add("hidden");
+            messagesList.classList.remove("hidden");
+            messagesList.innerHTML = "";
+
+            currentChat.messages.forEach((msg, idx) => {
+                const messageDiv = document.createElement("div");
+                messageDiv.className = `flex items-start gap-4 animate-fade-in ${msg.role === 'user' ? 'justify-end' : ''}`;
+                
+                let processedContent = msg.content;
+                let attachedImageHtml = "";
+
+                if (Array.isArray(msg.content)) {
+                    const textObj = msg.content.find(item => item.type === 'text');
+                    const imgObj = msg.content.find(item => item.type === 'image_url');
+                    processedContent = textObj ? textObj.text : "";
+                    
+                    if (imgObj && imgObj.image_url && imgObj.image_url.url) {
+                        attachedImageHtml = `<img src="${imgObj.image_url.url}" class="max-w-xs h-auto rounded-2xl mb-2 border border-stone-200/60 dark:border-zinc-800/60 object-contain shadow" alt="Attached">`;
+                    }
+                }
+
+                let htmlBody = formatMessageMarkdown(processedContent);
+
+                if (msg.role === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="max-w-[80%] flex flex-col items-end">
+                            ${attachedImageHtml}
+                            <div class="bg-white dark:bg-zinc-900 border border-stone-200/60 dark:border-zinc-800/60 px-5 py-3.5 rounded-[24px] rounded-tr-sm text-sm text-zinc-900 dark:text-zinc-100 shadow-sm">
+                                <p class="whitespace-pre-wrap leading-relaxed font-light">${htmlBody}</p>
+                            </div>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-900 font-light text-xs shrink-0 shadow-sm">
+                            ME
+                        </div>
+                    `;
+                } else {
+                    // Unique container details for the typewriter render check
+                    messageDiv.className += " message-container-block";
+                    messageDiv.innerHTML = `
+                        <div class="w-9 h-9 rounded-full bg-zinc-900 dark:bg-zinc-100 flex items-center justify-center text-white dark:text-zinc-900 shrink-0 shadow">
+                            <span class="material-symbols-rounded text-lg text-white dark:text-zinc-900">diversity_2</span>
+                        </div>
+                        <div class="max-w-[80%] space-y-1 mt-1">
+                            <div class="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Auricius AI</div>
+                            <div class="bg-white dark:bg-zinc-900 border border-stone-200/60 dark:border-zinc-800/60 px-5 py-3.5 rounded-[24px] rounded-tl-sm text-sm text-zinc-900 dark:text-zinc-100 shadow-sm leading-relaxed message-bubble-content prose dark:prose-invert">
+                                ${htmlBody}
+                            </div>
+                            <div class="flex items-center gap-2.5 pl-2 pt-1 text-zinc-500 dark:text-zinc-400">
+                                <button onclick="likeMessage(this)" class="hover:text-zinc-800 dark:hover:text-zinc-200 text-[10px] flex items-center gap-1 transition-colors font-light" title="Thích phản hồi này">
+                                    <span class="material-symbols-rounded text-xs">thumb_up</span>
+                                </button>
+                                <button onclick="dislikeMessage(this)" class="hover:text-zinc-800 dark:hover:text-zinc-200 text-[10px] flex items-center gap-1 transition-colors font-light" title="Không hài lòng">
+                                    <span class="material-symbols-rounded text-xs">thumb_down</span>
+                                </button>
+                                <button onclick="copyMessageText(this)" class="hover:text-zinc-800 dark:hover:text-zinc-200 text-[10px] flex items-center gap-1 transition-colors font-light" title="Sao chép toàn bộ phản hồi">
+                                    <span class="material-symbols-rounded text-xs">content_copy</span> Sao chép
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                messagesList.appendChild(messageDiv);
+                
+                // KaTeX Rendering hook
+                if (window.renderMathInElement) {
+                    window.renderMathInElement(messageDiv, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+            });
+
+            // Smooth scroll to bottom of chat scroll zone
+            const chatArea = document.getElementById("chatArea");
+            chatArea.scrollTo({ top: chatArea.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Typewriter Effect for newly generated Assistant message
+        function runTypewriterEffect(containerElement, fullText, callback) {
+            let words = fullText.split(" ");
+            let index = 0;
+            containerElement.innerHTML = "";
+
+            function typeNextWord() {
+                if (index < words.length) {
+                    const partialContent = words.slice(0, index + 1).join(" ");
+                    containerElement.innerHTML = formatMessageMarkdown(partialContent);
+                    
+                    // Fire Math Render
+                    if (window.renderMathInElement) {
+                        window.renderMathInElement(containerElement, {
+                            delimiters: [
+                                {left: '$$', right: '$$', display: true},
+                                {left: '$', right: '$', display: false}
+                            ],
+                            throwOnError: false
+                        });
+                    }
+
+                    index++;
+                    const chatArea = document.getElementById("chatArea");
+                    chatArea.scrollTop = chatArea.scrollHeight;
+                    setTimeout(typeNextWord, 35); // Optimized word delay
+                } else {
+                    if (callback) callback();
+                }
+            }
+            typeNextWord();
+        }
+
+        // Main Message Caller with complete Groq routing
+        async function sendMessage() {
+            if (appState.isGenerating) return;
+
+            const promptInput = document.getElementById("promptInput");
+            let promptText = promptInput.value.trim();
+            const attachedImage = appState.uploadedFileBase64;
+            const attachedFileType = appState.uploadedFileType;
+
+            if (!promptText && !attachedImage && !appState.uploadedFileContent) return;
+
+            appState.isGenerating = true;
+            document.getElementById("thinkingState").classList.remove("hidden");
+            
+            promptInput.value = "";
+            promptInput.style.height = 'auto';
+
+            // Establish session if first message
+            if (!appState.currentConversationId) {
+                const newId = 'conv_' + Date.now();
+                appState.conversations[newId] = {
+                    title: promptText ? (promptText.substring(0, 30) + '...') : `Tệp: ${appState.uploadedFileName}`,
+                    messages: [],
+                    createdAt: new Date().toISOString()
+                };
+                appState.currentConversationId = newId;
+            }
+
+            const currentChat = appState.conversations[appState.currentConversationId];
+
+            // Build structural query payloads
+            let finalPromptToSend = promptText;
+            if (attachedFileType === 'text' && appState.uploadedFileContent) {
+                finalPromptToSend = `[Nội dung tệp đính kèm: "${appState.uploadedFileName}"]\n\`\`\`\n${appState.uploadedFileContent}\n\`\`\`\n\nYêu cầu người dùng:\n${promptText || "Hãy phân tích nội dung tệp tin này."}`;
+            } else if (attachedFileType === 'video' && attachedImage) {
+                finalPromptToSend = `[Khung hình chụp tại t=1s của video đính kèm: "${appState.uploadedFileName}"]\n\nYêu cầu người dùng:\n${promptText || "Hãy mô tả và giải thích nội dung dựa trên khung hình video."}`;
+            }
+
+            let userMessageObj = {
+                role: 'user',
+                content: attachedImage ? [
+                    { type: "text", text: finalPromptToSend },
+                    { type: "image_url", image_url: { url: attachedImage } }
+                ] : finalPromptToSend
+            };
+
+            // Save visual representation
+            currentChat.messages.push({
+                role: 'user',
+                content: attachedImage ? [
+                    { type: 'text', text: promptText || "Hãy phân tích tài liệu ảnh" },
+                    { type: 'image_url', image_url: { url: attachedImage } }
+                ] : finalPromptToSend
+            });
+            
+            renderCurrentChat();
+            clearUploadedFile();
+
+            // Setup system message history package
+            const activePromptDirective = SYSTEM_PROMPTS[appState.activeGena] || SYSTEM_PROMPTS.gemma2;
+            const apiMessages = [
+                { role: "system", content: activePromptDirective }
+            ];
+
+            // Pack existing session messages
+            currentChat.messages.forEach(msg => {
+                apiMessages.push(msg);
+            });
+
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${appState.apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: MODEL_NAME,
+                        messages: apiMessages,
+                        temperature: 0.7,
+                        max_tokens: 4096
+                    })
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json();
+                    throw new Error(errData.error?.message || "Lỗi truy vấn API");
+                }
+
+                const result = await response.json();
+                let assistantResponse = result.choices[0].message.content;
+
+                // Praise and Sweet sentiment detection logic
+                const praiseKeywords = ["giỏi quá", "đỉnh quá", "cảm ơn", "cám ơn", "yêu cậu", "xịn thế", "xuất sắc", "quá đã", "tuyệt vời"];
+                const containsPraise = praiseKeywords.some(keyword => promptText.toLowerCase().includes(keyword));
+
+                // Add to session message database
+                currentChat.messages.push({
+                    role: "assistant",
+                    content: assistantResponse
+                });
+
+                saveToLocalStorage();
+                document.getElementById("thinkingState").classList.add("hidden");
+
+                // Render assistant box and run Typewriter flow
+                renderCurrentChat();
+                const allBubbles = document.querySelectorAll('.message-bubble-content');
+                const lastBubble = allBubbles[allBubbles.length - 1];
+                
+                runTypewriterEffect(lastBubble, assistantResponse, () => {
+                    // Trigger praise overlay if true
+                    if (containsPraise) {
+                        setTimeout(() => {
+                            triggerCelebration("Auricius đang hạnh phúc nhảy múa vì được cậu khen! 🥰");
+                        }, 500);
+                    }
+                });
+
+                renderChatHistory();
+
+            } catch (error) {
+                console.error("Fetch API error:", error);
+                showNotification("Lỗi kết nối máy chủ Groq. Vui lòng kiểm tra API Key!", "warning", true);
+                currentChat.messages.pop();
+                renderCurrentChat();
+                document.getElementById("thinkingState").classList.add("hidden");
+            } finally {
+                appState.isGenerating = false;
+            }
+        }
+
+        // Localstorage persistent operations
+        function saveToLocalStorage() {
+            localStorage.setItem("Auricius_conversations", JSON.stringify(appState.conversations));
+        }
+
+        function renderChatHistory() {
+            const container = document.getElementById("chatHistoryList");
+            const placeholder = document.getElementById("noHistoryPlaceholder");
+            
+            const items = container.querySelectorAll(".history-pill-item");
+            items.forEach(item => item.remove());
+
+            const keys = Object.keys(appState.conversations).sort((a, b) => {
+                return new Date(appState.conversations[b].createdAt) - new Date(appState.conversations[a].createdAt);
+            });
+
+            if (keys.length === 0) {
+                placeholder.classList.remove("hidden");
+                return;
+            }
+
+            placeholder.classList.add("hidden");
+
+            keys.forEach(key => {
+                const conv = appState.conversations[key];
+                const activeClass = appState.currentConversationId === key ? 'bg-stone-200/60 dark:bg-zinc-800/60 font-medium' : 'hover:bg-stone-200/30 dark:hover:bg-zinc-800/30';
+                
+                const div = document.createElement("div");
+                div.className = `history-pill-item flex items-center justify-between p-2.5 rounded-full text-xs transition-all cursor-pointer group ${activeClass}`;
+                div.onclick = (e) => {
+                    if(e.target.closest('.delete-conv-btn')) return;
+                    selectConversation(key);
+                };
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-2.5 truncate flex-1 pl-2 font-light">
+                        <span class="material-symbols-rounded text-base text-zinc-500">chat_bubble</span>
+                        <span class="truncate text-zinc-900 dark:text-zinc-50">${conv.title}</span>
+                    </div>
+                    <button class="delete-conv-btn opacity-0 group-hover:opacity-100 p-1.5 rounded-full hover:bg-stone-200 dark:hover:bg-zinc-700 text-zinc-500 hover:text-red-600 transition-all shrink-0 mr-1 flex items-center justify-center shadow-sm" 
+                            onclick="deleteConversation('${key}', event)">
+                        <span class="material-symbols-rounded text-xs">delete</span>
+                    </button>
+                `;
+
+                container.appendChild(div);
+            });
+        }
+
+        function selectConversation(id) {
+            appState.currentConversationId = id;
+            renderCurrentChat();
+            renderChatHistory();
+            
+            const sidebar = document.getElementById("sidebar");
+            if (!sidebar.classList.contains("-translate-x-full")) {
+                toggleSidebar();
+            }
+        }
+
+        function startNewChat() {
+            appState.currentConversationId = null;
+            renderCurrentChat();
+            renderChatHistory();
+            document.getElementById("promptInput").focus();
+        }
+
+        function deleteConversation(id, event) {
+            event.stopPropagation();
+            showConfirmDialog("Bạn có chắc chắn muốn xóa cuộc hội thoại này vĩnh viễn chứ?", () => {
+                delete appState.conversations[id];
+                saveToLocalStorage();
+                
+                if (appState.currentConversationId === id) {
+                    appState.currentConversationId = null;
+                }
+                
+                renderCurrentChat();
+                renderChatHistory();
+                showNotification("Đã xóa cuộc hội thoại thành công!", "delete");
+            });
+        }
+
+        function toggleApiKeyVisibility() {
+            const field = document.getElementById("apiKeyInputField");
+            const icon = document.getElementById("eyeIcon");
+            if (field.type === "password") {
+                field.type = "text";
+                icon.innerText = "visibility";
+            } else {
+                field.type = "password";
+                icon.innerText = "visibility_off";
+            }
+        }
+
+        function updateApiKeyLabel() {
+            const label = document.getElementById("apiKeyStatusLabel");
+            const key = appState.apiKey;
+            if (key === DEFAULT_API_KEY) {
+                label.innerText = "Khóa bảo mật: Hoạt động 🔒";
+            } else {
+                label.innerText = "Khóa cá nhân: Đã đồng bộ 🛡️";
+            }
+        }
+
+        function saveSettings() {
+            // Save Username
+            const userVal = document.getElementById("usernameInputField").value.trim();
+            appState.username = userVal || "cậu";
+            localStorage.setItem("Auricius_username", appState.username);
+
+            // Save API Key
+            const apiVal = document.getElementById("apiKeyInputField").value.trim();
+            if (!apiVal) {
+                appState.apiKey = DEFAULT_API_KEY;
+                localStorage.removeItem("Auricius_api_key");
+            } else {
+                appState.apiKey = apiVal;
+                localStorage.setItem("Auricius_api_key", apiVal);
+            }
+
+            updateApiKeyLabel();
+            updateUserGreeting();
+            toggleSettingsModal();
+            showNotification("Đã lưu các cấu hình cá nhân hóa thành công!", "verified_user");
+        }
+
+        // Upgrade Plus Dialog Simulator
+        function openUpgradeModal() {
+            document.getElementById("upgradeModal").classList.remove("hidden");
+        }
+
+        function closeUpgradeModal() {
+            document.getElementById("upgradeModal").classList.add("hidden");
+        }
+
+        function executeUpgradeSimulate() {
+            closeUpgradeModal();
+            showNotification("Hệ thống đang xử lý giao dịch nâng cấp...", "sync");
+            setTimeout(() => {
+                showNotification("Nâng cấp Premium thành công! Trải nghiệm không giới hạn ngay 🎉", "workspace_premium");
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
