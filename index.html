@@ -581,7 +581,7 @@
     <script>
         // System and API configuration state
         const DEFAULT_API_KEY = "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";
-        const MODEL_NAME = "qwen/qwen3-32b";
+        const MODEL_NAME = "openai/gpt-oss-20b";
         
         // Dynamic customized system prompt directives mapping each AI Model from Gruachilles   Hub
         const SYSTEM_PROMPTS = {
@@ -1344,7 +1344,7 @@ Phản hồi mang tính xây dựng: Hãy luôn đặt mình vào vị thế c�
                         "Authorization": `Bearer ${appState.apiKey}`
                     },
                     body: JSON.stringify({
-                        model: MODEL_NAME,
+                        model: ,
                         messages: apiMessages,
                         temperature: 0.7,
                         max_tokens: 4096
